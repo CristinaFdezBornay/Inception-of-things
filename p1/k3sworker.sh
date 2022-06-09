@@ -1,17 +1,17 @@
-echo Fixing Yum
+echo "=== SCRIPT PROVISION WORKER ==="
 
-sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+echo "==> FIXING YUM"
+sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-echo Yum fixed, installing ifconfig
+# echo "==> INSTALLING k3s"
 
-sudo yum update && sudo yum install net-tools
+# echo "=> Copy token"
+# OUR_IP=192.168.42.1
+# scp -o StrictHostKeyChecking=accept-new -i /home/vagrant/.ssh/id_rsa adricristi@$OUR_IP:~/Inception-of-things/p1/node-token . 
 
-echo Installing K3s
+# echo "=> Download and configure k3s"
+# SERVER_IP=192.168.42.110
+# curl -sfL https://get.k3s.io | K3S_URL=https://$SERVER_IP:6443 K3S_TOKEN=`sudo cat node-token` sh -
 
-SERVER_IP=192.168.42.110
-
-scp -o StrictHostKeyChecking=accept-new -i /home/vagrant/.ssh/id_rsa adricristi@192.168.42.1:~/Inception-of-things/p1/node-token . 
-curl -sfL https://get.k3s.io | K3S_URL=https://$SERVER_IP:6443 K3S_TOKEN=`cat node-token` sh -
-
-echo Installation complete
+# echo "==> INSTALLATION COMPLETED"
