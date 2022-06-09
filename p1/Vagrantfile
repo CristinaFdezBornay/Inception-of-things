@@ -1,5 +1,4 @@
 Vagrant.configure(2) do |config|
-    # [...]
     config.vm.box = "centos/8"
     config.vm.box_url = "https://app.vagrantup.com/centos/boxes/8"
 
@@ -7,18 +6,15 @@ Vagrant.configure(2) do |config|
     config.vm.define "cristinaS" do |control|
         control.vm.hostname = "cristinaS"
         control.vm.network "private_network", ip: "192.168.42.110"
+        control.vm.network "forwarded_port", guest: 6443, host: 6443
         control.vm.provider "virtualbox" do |v|
             v.cpus = 1
             v.memory = 512
             v.customize ["modifyvm", :id, "--name", "cristinaS"]
-            # [...]
         end
-        config.vm.provision :shell, :inline => SHELL
-            # [...]
-        SHELL
-        control.vm.provision "shell", path: REDACTED
-        # control.vm.provision "file", source: "./.ssh/id_rsa.pub", destination: "/tmp/id_rsa.pub"
-        # control.vm.provision "file", source: "./.ssh/id_rsa", destination: "/tmp/id_rsa"
+        control.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
+        control.vm.provision "file", source: "~/.ssh/id_rsa", destination: "/home/vagrant/.ssh/id_rsa"
+        control.vm.provision "shell", path: "k3s.sh"
     end
 
 # CONFIGURATION SERVER WORKER MV
@@ -29,14 +25,10 @@ Vagrant.configure(2) do |config|
             v.cpus = 1
             v.memory = 512
             v.customize ["modifyvm", :id, "--name", "cristinaSW"]
-            # [...]
         end
-        config.vm.provision "shell", inline: <<-SHELL
-            # [..]
-        SHELL
-        control.vm.provision "shell", path: REDACTED
-        # control.vm.provision "file", source: "./.ssh/id_rsa.pub", destination: "/tmp/id_rsa.pub"
-        # control.vm.provision "file", source: "./.ssh/id_rsa", destination: "/tmp/id_rsa"
+        control.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
+        control.vm.provision "file", source: "~/.ssh/id_rsa", destination: "/home/vagrant/.ssh/id_rsa"
+        control.vm.provision "shell", path: "k3sworker.sh"
     end
 
 end
