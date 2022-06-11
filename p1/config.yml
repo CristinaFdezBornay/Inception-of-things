@@ -1,0 +1,22 @@
+---
+config:
+  vm:
+    cpus: 1
+    memory: 512
+    ssh_key_private: '/home/vagrant/.ssh/id_rsa'
+    ssh_key_public: '/home/vagrant/.ssh/id_rsa.pub'
+  server:
+    name: 'cristinaS'
+    ip: '192.168.42.110'
+    script: 'k3s.sh'
+    token_file: '/var/lib/rancher/k3s/server/node-token'
+  worker:
+    name: 'cristinaSW'
+    ip: '192.168.42.111'
+    script: 'k3sworker.sh'
+  user:
+    name: ''
+    ip: ''
+    token_file: '/tmp/node-token'
+    ssh_key_private: ''
+    ssh_key_public: ''

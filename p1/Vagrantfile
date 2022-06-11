@@ -1,34 +1,56 @@
+### IMPORTING CONFIGURATION VARIABLES ###
+require 'yaml'
+
+current_dir = File.dirname(File.expand_path(__FILE__))
+configs     = YAML.load_file("#{current_dir}/config.yml")
+vm          = configs['config']['vm']
+server      = configs['config']['server']
+worker      = configs['config']['worker']
+user        = configs['config']['user']
+
+### VAGRANT CONFIGURATION ###
 Vagrant.configure(2) do |config|
     config.vm.box = "centos/8"
     config.vm.box_url = "https://app.vagrantup.com/centos/boxes/8"
 
 # CONFIGURATION SERVER VM
-    config.vm.define "cristinaS" do |control|
-        control.vm.hostname = "cristinaS"
-        control.vm.network "private_network", ip: "192.168.42.110"
-        # control.vm.network "forwarded_port", guest: 6443, host: 6443
+    config.vm.define server['name'] do |control|
+        control.vm.hostname = server['name']
+        control.vm.network "private_network", ip: server['ip']
         control.vm.provider "virtualbox" do |v|
-            v.cpus = 1
-            v.memory = 512
-            v.customize ["modifyvm", :id, "--name", "cristinaS"]
+            v.cpus = vm['cpus']
+            v.memory = vm['memory']
+            v.customize ["modifyvm", :id, "--name", server['name']]
         end
-        control.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
-        control.vm.provision "file", source: "~/.ssh/id_rsa", destination: "/home/vagrant/.ssh/id_rsa"
-        control.vm.provision "shell", path: "k3s.sh"
+        control.vm.provision "file", source: user['ssh_key_private'], destination: vm['ssh_key_private']
+        control.vm.provision "file", source: user['ssh_key_public'], destination: vm['ssh_key_public']
+        control.vm.provision "shell", path: server['script'], args: [
+            vm['ssh_key_private'],
+            server['token_file'],
+            user['name'],
+            user['ip'],
+            user['token_file']
+        ]
     end
 
 # CONFIGURATION SERVER WORKER MV
-    config.vm.define "cristinaSW" do |control|
-        control.vm.hostname = "cristinaSW"
-        control.vm.network "private_network", ip: "192.168.42.111"
+    config.vm.define worker['name'] do |control|
+        control.vm.hostname = worker['name']
+        control.vm.network "private_network", ip: worker['ip']
         control.vm.provider "virtualbox" do |v|
-            v.cpus = 1
-            v.memory = 512
-            v.customize ["modifyvm", :id, "--name", "cristinaSW"]
+            v.cpus = vm['cpus']
+            v.memory = vm['memory']
+            v.customize ["modifyvm", :id, "--name", worker['name']]
         end
-        control.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
-        control.vm.provision "file", source: "~/.ssh/id_rsa", destination: "/home/vagrant/.ssh/id_rsa"
-        control.vm.provision "shell", path: "k3sworker.sh"
+        control.vm.provision "file", source: user['ssh_key_private'], destination: vm['ssh_key_private']
+        control.vm.provision "file", source: user['ssh_key_public'], destination: vm['ssh_key_public']
+        control.vm.provision "shell", path: worker['script'], args: [
+            vm['ssh_key_private'],
+            user['name'],
+            user['ip'],
+            user['token_file'],
+            server['ip']
+        ]
     end
 
 end

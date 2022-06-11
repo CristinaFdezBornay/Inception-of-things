@@ -1,19 +1,28 @@
-echo Fixing Yum
+echo "=== CONFIGURATION SERVER ==="
 
+echo "==> FIX YUM"
 sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-echo Yum fixed, installing ifconfig
+echo "==> DISABLE FIREWALL"
 sudo systemctl disable firewalld --now
 
-sudo yum update && sudo yum install -y net-tools
+echo "==> INSTALLATION IFCONFIG"
+sudo yum update -y
+sudo yum install -y net-tools
 
-echo Installing K3s
+echo "==> INSTALLATION K3S"
 
+echo "=> Download and install k3s"
 curl -sfL https://get.k3s.io | sh -s - server --flannel-iface=eth1 --disable traefik --disable servicelb
 
-TOKEN_FILE='/var/lib/rancher/k3s/server/node-token'
+echo "=> Copy Token"
+VM_SSH_KEY_PRIVATE=$1
+SERVER_TOKEN_FILE=$2
+USER_NAME=$3
+USER_IP=$4
+USER_TOKEN_FILE=$5
 
-sudo scp -o StrictHostKeyChecking=accept-new -i /home/vagrant/.ssh/id_rsa $TOKEN_FILE alagroy-@192.168.42.1:/tmp/node-token
+sudo scp -o StrictHostKeyChecking=accept-new -i $VM_SSH_KEY_PRIVATE $SERVER_TOKEN_FILE $USER_NAME@$USER_IP:$USER_TOKEN_FILE
 
-echo Installation complete
+echo "=== CONFIGURATION SERVER OK ==="
