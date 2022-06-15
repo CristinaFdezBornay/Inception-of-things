@@ -1,0 +1,26 @@
+### IMPORTING CONFIGURATION VARIABLES ###
+require 'yaml'
+
+current_dir = File.dirname(File.expand_path(__FILE__))
+configs     = YAML.load_file("#{current_dir}/confs/config.yml")
+vm          = configs['config']['vm']
+server      = configs['config']['server']
+
+### VAGRANT CONFIGURATION ###
+Vagrant.configure(2) do |config|
+    config.vm.box = "centos/8"
+    config.vm.box_url = "https://app.vagrantup.com/centos/boxes/8"
+
+# CONFIGURATION SERVER VM
+    config.vm.define server['name'] do |control|
+        control.vm.hostname = server['name']
+        control.vm.network "private_network", ip: server['ip']
+        control.vm.provider "virtualbox" do |v|
+            v.cpus = vm['cpus']
+            v.memory = vm['memory']
+            v.customize ["modifyvm", :id, "--name", server['name']]
+        end
+        control.vm.provision "shell", path: server['script']
+    end
+
+end

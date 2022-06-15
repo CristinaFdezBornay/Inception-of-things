@@ -1,0 +1,10 @@
+---
+config:
+  vm:
+    cpus: 1
+    memory: 1024
+  server:
+    name: 'cristinaS'
+    ip: '192.168.42.110'
+    script: './scripts/k3s.sh'
+
