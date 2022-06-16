@@ -15,14 +15,13 @@ echo "==> INSTALLATION K3S"
 
 echo "=> Download and install k3s"
 curl -sfL https://get.k3s.io | sh -s - server --flannel-iface=eth1
-echo alias k="'sudo /usr/local/bin/kubectl'" >> .bashrc
-source .bashrc
+echo alias k="'sudo /usr/local/bin/kubectl'" >> ~/.bashrc
 
 echo "=== CONFIGURATION SERVER OK ==="
 
 echo "=== CREATING PODS ==="
 
-for i in `seq 1 3`; do k apply -f /vagrant/confs/pod${i}.yaml; done
-k apply -f /vagrant/confs/ingress.yaml 
+for i in `seq 1 3`; do sudo /usr/local/bin/kubectl apply -f /vagrant/confs/pod${i}.yaml; done
+sudo /usr/local/bin/kubectl apply -f /vagrant/confs/ingress.yaml 
 
 echo "=== PODS CREATED ==="
