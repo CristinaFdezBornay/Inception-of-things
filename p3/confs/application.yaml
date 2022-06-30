@@ -3,7 +3,7 @@ kind: Application
 metadata:
   labels:
     app: silver-octo-couscous
-  name: silver-octo-couscous-app-not-deleting-1
+  name: silver-octo-couscous-app
 spec:
   project: silver-octo-couscous-project
   source:
