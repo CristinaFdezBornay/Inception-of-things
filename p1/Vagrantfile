@@ -2,7 +2,7 @@
 require 'yaml'
 
 current_dir = File.dirname(File.expand_path(__FILE__))
-configs     = YAML.load_file("#{current_dir}/config.yml")
+configs     = YAML.load_file("#{current_dir}/confs/config.yml")
 vm          = configs['config']['vm']
 server      = configs['config']['server']
 worker      = configs['config']['worker']

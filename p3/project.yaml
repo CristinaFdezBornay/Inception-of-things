@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: silver-octo-couscous-project
+  labels:
+    app: silver-octo-couscous
+spec:
+  description: Our ArgoCD Project to deploy our app locally
+  sourceRepos:
+  - "https://github.com/alagroy-42/silver-octo-couscous"
+  destinations:
+  - namespace: dev
+    server: https://kubernetes.default.svc
+  orphanedResources:
+    warn: false
