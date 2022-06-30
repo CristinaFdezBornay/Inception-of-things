@@ -1,4 +1,4 @@
-CONF_PATH=""
+CONF_PATH="/tmp/Inception-of-things/p3/confs"
 
 echo ===== INSTALLING DOCKER ======
 sudo apt-get remove docker docker-engine docker.io containerd runc
@@ -24,6 +24,8 @@ echo ==== INSTALLING ARGOCD ====
 sudo kubectl create namespace argocd
 sudo kubectl apply -f $CONF_PATH/install.yaml -n argocd
 sudo kubectl apply -f $CONF_PATH/ingress.yaml -n argocd
+
+echo -n "Press enter once every container is running :" ; read
 
 echo ==== SETTING NEW PASSWORD ====
 sudo kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "$2a$12$t6bSj.YhcnLX7JYUinhQWOzwwh2e71MNAKamvHZXy48ynEd9hwlPC", "admin.passwordMtime": "'$(date +%FT%T%Z)'"}}'
